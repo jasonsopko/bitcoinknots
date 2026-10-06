@@ -3654,10 +3654,14 @@ int CWallet::GetTxBlocksToMaturity(const CWalletTx& wtx) const
     const int blocks_to_maturity{std::max(0, (COINBASE_MATURITY + 1) - chain_depth)};
 
     // While the long coinbase maturity rule is scheduled, policy also holds
-    // every coinbase for COINBASE_MATURITY_POLICY_TIME of median time past
-    // (see MemPoolAccept::PreChecks), so count the blocks that will take
+    // every coinbase from its start height on for COINBASE_MATURITY_POLICY_TIME
+    // of median time past (see MemPoolAccept::PreChecks), so count the blocks
+    // that will take
     const auto* conf{wtx.state<TxStateConfirmed>()};
     if (!conf || !HaveChain() || !chain().coinbaseMaturityLongScheduled()) {
+        return blocks_to_maturity;
+    }
+    if (conf->confirmed_block_height < Params().GetConsensus().CoinbaseMaturityLongStartHeight) {
         return blocks_to_maturity;
     }
     if (!wtx.m_confirmed_block_mtp || wtx.m_confirmed_block_mtp->first != conf->confirmed_block_hash) {
