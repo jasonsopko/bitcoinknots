@@ -274,6 +274,9 @@ static constexpr unsigned int DATA_OUTPUT_CURVE_CHECKS{64};
  */
 std::vector<size_t> DataOutputBytes(const CTransaction& tx, const CCoinsViewCache* view = nullptr);
 
+/** -rejectfakeoutputs: a global like -rejectbpub, so the PSBT size estimate follows it too */
+extern bool g_reject_fake_outputs;
+
 std::pair<size_t, size_t> DatacarrierBytes(const CTransaction& tx, const CCoinsViewCache& view, const std::vector<size_t>& data_outputs);
 
 int32_t CalculateExtraTxWeight(const CTransaction& tx, const CCoinsViewCache& view, const unsigned int weight_per_data_byte, const std::vector<size_t>& data_outputs);
